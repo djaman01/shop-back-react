@@ -6,28 +6,27 @@ app.use(express.json());//To convert=parse incoming JSON data from HTTP requests
 
 const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. / On trouver le contenu du site ici: http://localhost:3005/
 
-const cors = require('cors')
 const db = require('./connect-db')
-
 
 require('dotenv').config(); //To use the environment variable
 
+const cors = require('cors')
 app.use(cors({
   origin: ["http://localhost:3000"],//Local Host: to access the front-end side through this URL
-  methods: ["GET", "POST", "PUT", "DELETE"],//
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }))
 
 //Destructure les variables qui contiennent les modèles et collection name
-const { postProducts } = require('./model-doc')//on destructure les differnts models
+const { postProducts } = require('./model-doc')//on destructure les differents models
 
 app.post('/upload', async (req, res) => {
   const { type, details, prix, code } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
   try {
-    const newPost = await postProducts.create({ type, details, prix, code }); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
-    res.json(newPost)//La réponse est la création d'un document avec le modele stored dans la variabel postProducts (voir medel.doc)
+    const newPost = await postProducts.create({ type, details, prix, code }); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
+    res.json(newPost)//permet de renvoyer la structure dans la console si le document est crée
   }
-  catch (error) {
+  catch (error) {//Prevents the error from crashing the entire application and communicate errors to the client.
     res.status(500).send(error)
   }
 });
