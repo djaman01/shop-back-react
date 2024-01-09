@@ -20,10 +20,16 @@ app.use(cors({
 //Destructure les variables qui contiennent les modèles et collection name
 const { postProducts } = require('./model-doc')//on destructure les differents models
 
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
+
+
+//------------------------------------------------------------
+
 app.post('/upload', async (req, res) => {
-  const { type, details, prix, code } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
+  const { type, details, prix, code, imageUrl } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
   try {
-    const newPost = await postProducts.create({ type, details, prix, code }); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
+    const newPost = await postProducts.create({ type, details, prix, code, imageUrl }); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
     res.json(newPost)//permet de renvoyer la structure dans la console si le document est crée
   }
   catch (error) {//Prevents the error from crashing the entire application and communicate errors to the client.
@@ -36,6 +42,7 @@ app.get('/', (req, res) => {
   res.send('Hello, this is your Express server!');
 });
 
+//----------------------------------------------------------------------------
 
 //Starting the Server:
 //This code starts the Express server and listens on the specified port (3005 in this case). 
