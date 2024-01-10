@@ -16,5 +16,24 @@ const product = mongoose.Schema(
 //on store dans une variable = mongoose.model("collectionName", schema/modèle)
 //C'est cette variable qu'on va destructurer dans le serveur pour utiliser le modèle
 const postProducts = mongoose.model('shopProducts', product)
+//
 
-module.exports = {postProducts};
+const allproduct = mongoose.Schema(
+  {
+    type: "string",
+    imageUrl: "string",
+    infoProduit: "string",
+    auteur: "string",
+    prix: "string",
+    etat: "string",
+    code: "string"
+  },
+
+  {
+    timestamps: true,
+  }
+);
+//mongoose.model("collectionName", schema)
+const postAllProduct = mongoose.model('allProduct', allproduct)
+
+module.exports = {postProducts, postAllProduct };

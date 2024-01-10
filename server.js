@@ -18,13 +18,13 @@ app.use(cors({
 }))
 
 //Destructure les variables qui contiennent les modèles et collection name
-const { postProducts } = require('./model-doc')//on destructure les differents models
+const { postProducts, postAllProduct } = require('./model-doc')//on destructure les differents models
 
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
-
+const path = require('path')
 
 //------------------------------------------------------------
+//Pour post les produits stockés dans un fichier json
 
 app.post('/upload', async (req, res) => {
   const { type, details, prix, code, imageUrl } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
@@ -37,6 +37,46 @@ app.post('/upload', async (req, res) => {
   }
 });
 
+//--------------------------------------------------------------
+
+//Pour stocker les fichier images send par le front-end, dans le serveur
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage }); //Pour gérer les fichier téléchargés dans les routes express
+
+//Pour appliquer le stockage de l'image dans le serveur (Middleware) + envoyer l'url de l'image dans la Database
+app.post('/realup', upload.single('file'), async (req, res) => {
+
+  try {
+
+    const imageUrl = req.file.path.replace(/\\/g, '/'); //On store le path de l'image dans la variable imageUrl
+
+    const { type, auteur, infoProduit, prix } = req.body; // Extract product data by destructuring the object from the request body
+
+    const newProduct = new postAllProduct({type,auteur,imageUrl,infoProduit, prix});
+
+    // Save the product to the database
+    await newProduct.save();
+    // Respond with a success message or the newly created product
+    // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
+    res.json({ imageUrl })
+  }
+   catch (error) {
+    console.error('Error handling image upload and product data storage:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+//----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
 app.get('/', (req, res) => {
   res.send('Hello, this is your Express server!');
