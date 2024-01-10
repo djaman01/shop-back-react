@@ -27,9 +27,9 @@ const path = require('path')
 //Pour post les produits stockés dans un fichier json
 
 app.post('/upload', async (req, res) => {
-  const { type, details, prix, code, imageUrl } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
+  const { type, details, prix, code } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
   try {
-    const newPost = await postProducts.create({ type, details, prix, code, imageUrl }); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
+    const newPost = await postProducts.create({ type, details, prix, code}); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
     res.json(newPost)//permet de renvoyer la structure dans la console si le document est crée
   }
   catch (error) {//Prevents the error from crashing the entire application and communicate errors to the client.
@@ -61,13 +61,8 @@ app.post('/realup', upload.single('file'), async (req, res) => {
 
     const { type, auteur, infoProduit, prix } = req.body; // Extract product data by destructuring the object from the request body
 
-    const newProduct = new postAllProduct({type,auteur,imageUrl,infoProduit, prix});
-
-    // Save the product to the database
-    await newProduct.save();
-    // Respond with a success message or the newly created product
-    // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
-    res.json({ imageUrl })
+    const newProduct = await postAllProduct.create({type,auteur,imageUrl,infoProduit, prix})
+    res.json(newProduct)
   }
    catch (error) {
     console.error('Error handling image upload and product data storage:', error);
