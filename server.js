@@ -38,6 +38,7 @@ app.post('/upload', async (req, res) => {
 });
 
 //--------------------------------------------------------------
+//To Post the products to the database
 
 //Pour stocker les fichier images send par le front-end, dans le serveur
 const storage = multer.diskStorage({
@@ -49,6 +50,9 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
 
 const upload = multer({ storage: storage }); //Pour gérer les fichier téléchargés dans les routes express
 
@@ -70,6 +74,19 @@ app.post('/realup', upload.single('file'), async (req, res) => {
   }
 });
 
+//----------------------------------------------------------------
+//To GET the last 20 products on the HomePage
+app.get('/homeProducts', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20; // Get the 'limit' query parameter from the request or default to 20
+    const products = await postAllProduct.find().sort({ _id: -1 }).limit(limit); // Sort by _id in descending order to get the last 20 products
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Unable to fetch products' });
+  }
+});
 
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
