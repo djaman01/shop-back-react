@@ -25,6 +25,7 @@ const allproduct = mongoose.Schema(
     auteur: "string",
     prix: "string",
     etat: "string",
+    quantity: "string",
     code: "string"
   },
 

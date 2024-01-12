@@ -63,9 +63,9 @@ app.post('/realup', upload.single('file'), async (req, res) => {
 
     const imageUrl = req.file.path.replace(/\\/g, '/'); //On store le path de l'image dans la variable imageUrl
 
-    const { type, auteur, infoProduit, prix } = req.body; // Extract product data by destructuring the object from the request body
+    const { type, auteur, infoProduit, quantity, prix } = req.body; // Extract product data by destructuring the object from the request body
 
-    const newProduct = await postAllProduct.create({type,auteur,imageUrl,infoProduit, prix})
+    const newProduct = await postAllProduct.create({type,auteur,imageUrl,infoProduit, quantity, prix})
     res.json(newProduct)
   }
    catch (error) {
