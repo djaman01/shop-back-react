@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
 
-const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. / On trouver le contenu du site ici: http://localhost:3005/
+const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. / On trouver le contenu du serveur ici: http://localhost:3005/
 
 const db = require('./connect-db')
 
@@ -18,24 +18,10 @@ app.use(cors({
 }))
 
 //Destructure les variables qui contiennent les modèles et collection name
-const { postProducts, postAllProduct } = require('./model-doc')//on destructure les differents models
+const { postAllProduct } = require('./model-doc')//on destructure les differents models
 
-const multer  = require('multer')
+const multer = require('multer')
 const path = require('path')
-
-//------------------------------------------------------------
-//Pour post les produits stockés dans un fichier json
-
-app.post('/upload', async (req, res) => {
-  const { type, details, prix, code } = req.body; //on tire la value du body de la requête en destructurant pour assigner les values aux properties
-  try {
-    const newPost = await postProducts.create({ type, details, prix, code}); //To create a new document (record) in the MongoDB collection in a Synchronous manner; so that if there is an arror, it'll be catch after
-    res.json(newPost)//permet de renvoyer la structure dans la console si le document est crée
-  }
-  catch (error) {//Prevents the error from crashing the entire application and communicate errors to the client.
-    res.status(500).send(error)
-  }
-});
 
 //--------------------------------------------------------------
 //To Post the products to the database
@@ -65,10 +51,10 @@ app.post('/realup', upload.single('file'), async (req, res) => {
 
     const { type, auteur, infoProduit, quantity, prix } = req.body; // Extract product data by destructuring the object from the request body
 
-    const newProduct = await postAllProduct.create({type,auteur,imageUrl,infoProduit, quantity, prix})
-    res.json(newProduct)
+    const newProduct = await postAllProduct.create({ type, auteur, imageUrl, infoProduit, quantity, prix })
+    res.json(newProduct) //Pas obligé, mais important car envoie dans la console le produit ajouté en json = confirmation ajout sans accéder à la database
   }
-   catch (error) {
+  catch (error) {
     console.error('Error handling image upload and product data storage:', error);
     res.status(500).json({ error: error.message });
   }
@@ -79,14 +65,28 @@ app.post('/realup', upload.single('file'), async (req, res) => {
 app.get('/homeProducts', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20; // Get the 'limit' query parameter from the request or default to 20
-    const products = await postAllProduct.find().sort({ _id: -1 }).limit(limit); // Sort by _id in descending order to get the last 20 products
-
-    res.json(products);
-  } catch (error) {
-    console.error('Error fetching products from the database:', error);
-    res.status(500).json({ error: 'Unable to fetch products' });
+    const postProducts = await postAllProduct.find().sort({ _id: -1 }).limit(limit); // Sort by _id in descending order to get the last 20 products
+    res.json(postProducts) // !!! res.json() OBLIGé Pour envoyer la data au front-end
   }
+ catch (error) {
+  console.error('Error fetching products from the database:', error);
+  res.status(500).json({ error: 'Internal Server Error' });
+}
 });
+
+//-----------------------------------------------------------------
+//To GET data of products in the Dashboard
+app.get('/allProducts', async (req, res) => {
+
+  try {
+    const products = await postAllProduct.find(); //.find()= trouve tous les produits
+    res.json(products);// !!! Obligé pour envoyé les produits en réponse
+  }
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
