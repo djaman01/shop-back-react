@@ -23,8 +23,7 @@ const { postAllProduct } = require('./model-doc')//on destructure les differents
 const multer = require('multer')
 const path = require('path')
 
-//--------------------------------------------------------------
-//To Post the products to the database
+//To Post the products to the database---------------------------------
 
 //Pour stocker les fichier images send par le front-end, dans le serveur
 const storage = multer.diskStorage({
@@ -60,22 +59,21 @@ app.post('/realup', upload.single('file'), async (req, res) => {
   }
 });
 
-//----------------------------------------------------------------
-//To GET the last 20 products on the HomePage
+//To GET the last 20 products on the HomePage-----------
+
 app.get('/homeProducts', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20; // Get the 'limit' query parameter from the request or default to 20
     const postProducts = await postAllProduct.find().sort({ _id: -1 }).limit(limit); // Sort by _id in descending order to get the last 20 products
     res.json(postProducts) // !!! res.json() OBLIGé Pour envoyer la data au front-end
   }
- catch (error) {
-  console.error('Error fetching products from the database:', error);
-  res.status(500).json({ error: 'Internal Server Error' });
-}
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-//-----------------------------------------------------------------
-//To GET data of products in the Dashboard
+//GET data of products in the Dashboard-----------------
 app.get('/allProducts', async (req, res) => {
 
   try {
@@ -87,6 +85,23 @@ app.get('/allProducts', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 })
+
+//PUT to change products properties------------------------------
+app.put('/putDash/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const updatedProductData = req.body;
+    // productId= trouve le produit / updatedProductData= applique les changement reçu du front-end/{new:true} = Returns the modified document after the update.
+    const updatedProduct = await postAllProduct.findByIdAndUpdate(productId, updatedProductData, { new: true }); //!!! : à la fin OBLIGE
+      //To show update on the browser or handle errors if product isn't found
+      (updatedProduct) ? res.json(updatedProduct) : res.status(404).json({ error: 'product not found' }); //dans l'objet, je donne à l'objet error la value 'product not found'
+  }
+  //To handle server error = back-end code error
+  catch (error) {
+    res.status(500).json({ error: 'internal server error' });
+  }
+}
+)
 
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
