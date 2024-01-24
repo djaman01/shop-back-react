@@ -103,6 +103,21 @@ app.put('/putDash/:productId', async (req, res) => {
 }
 )
 
+//DELETE to change products properties------------------------------
+app.delete('/deleteElement/:productId', async(req, res) => {
+  try {
+    const productId = req.params.productId;
+    const deletedProduct = await postAllProduct.findByIdAndDelete(productId);
+
+    (deletedProduct) ? res.status(200).json({ message: 'Product deleted successfully', deletedProduct }) : res.status(404).json({ error: 'Product not found' });
+  }
+  
+  catch (error) {
+    res.status(500).json({ error: 'internal server error' });
+  }
+}
+)
+
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
 app.get('/', (req, res) => {
