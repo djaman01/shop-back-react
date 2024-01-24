@@ -93,7 +93,7 @@ app.put('/putDash/:productId', async (req, res) => {
     const updatedProductData = req.body;
     // productId= trouve le produit / updatedProductData= applique les changement reçu du front-end/{new:true} = Returns the modified document after the update.
     const updatedProduct = await postAllProduct.findByIdAndUpdate(productId, updatedProductData, { new: true }); //!!! : à la fin OBLIGE
-      //To show update on the browser or handle errors if product isn't found
+      //To be able to use response.data for example on the browser or handle errors if product isn't found
       (updatedProduct) ? res.json(updatedProduct) : res.status(404).json({ error: 'product not found' }); //dans l'objet, je donne à l'objet error la value 'product not found'
   }
   //To handle server error = back-end code error
