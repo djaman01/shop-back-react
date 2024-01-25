@@ -94,7 +94,7 @@ app.put('/putDash/:productId', async (req, res) => {
     // productId= trouve le produit / updatedProductData= applique les changement reçu du front-end/{new:true} = Returns the modified document after the update.
     const updatedProduct = await postAllProduct.findByIdAndUpdate(productId, updatedProductData, { new: true }); //!!! : à la fin OBLIGE
       //To be able to use response.data for example on the browser or handle errors if product isn't found
-      (updatedProduct) ? res.json(updatedProduct) : res.status(404).json({ error: 'product not found' }); //dans l'objet, je donne à la property error la value 'product not found'
+      (updatedProduct) ? res.json({message: "Product Updated", updatedProduct}) : res.status(404).json({ error: 'product not found' }); //dans l'objet, je donne à la property error la value 'product not found'
   }
   //To handle server error = back-end code error
   catch (error) {
@@ -109,7 +109,7 @@ app.delete('/deleteElement/:productId', async(req, res) => {
     const productId = req.params.productId;
     const deletedProduct = await postAllProduct.findByIdAndDelete(productId);
 
-    (deletedProduct) ? res.status(200).json({ message: 'Product deleted successfully', deletedProduct }) : res.status(404).json({ error: 'Product not found' });
+    (deletedProduct) ? res.status(200).json({ message: 'server says: Product deleted successfully', deletedProduct }) : res.status(404).json({ error: 'Product not found' });
   }
   
   catch (error) {
