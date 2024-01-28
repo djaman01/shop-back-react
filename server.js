@@ -118,6 +118,24 @@ app.delete('/deleteElement/:productId', async(req, res) => {
 }
 )
 
+// To Get 1 product pour la fiche Produit--------------------------
+app.get('/article/:productId', async(req, res) => {
+try{
+  const productId= req.params.productId;
+  const product = await postAllProduct.findById(productId); //!!! NE PAS OUBLIER ; à la fin, car peut faire tout péter
+
+  (product) ? res.json(product) : res.status(404).json({ error: 'Product not found' });
+
+}
+catch (error) {
+  console.error('Error fetching products from the database:', error);
+  res.status(500).json({ error: 'Internal Server Error' });
+}
+
+}
+)
+
+
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
 app.get('/', (req, res) => {
