@@ -118,7 +118,7 @@ app.delete('/deleteElement/:productId', async(req, res) => {
 }
 )
 
-// To Get 1 product pour la fiche Produit--------------------------
+// To GET 1 product pour la fiche Produit--------------------------
 app.get('/article/:productId', async(req, res) => {
 try{
   const productId= req.params.productId;
@@ -134,6 +134,19 @@ catch (error) {
 
 }
 )
+// To GET product of type chemise---------------------------------
+app.get('/chemise', async (req, res) => {
+  try {
+    const chemiseProducts = await postAllProduct.find({ type: 'Chemise' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"Chemise"
+
+    (chemiseProducts) ? res.json(chemiseProducts) : res.status(404).json({ error: 'Product not found' });
+
+  } 
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 //----------------------------------------------------------------
