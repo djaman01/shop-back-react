@@ -148,6 +148,34 @@ app.get('/chemise', async (req, res) => {
   }
 });
 
+// To GET product of type Pantalon---------------------------------
+app.get('/pantalon', async (req, res) => {
+  try {
+    const pantalonProducts = await postAllProduct.find({ type: 'Pantalon' });
+
+    (pantalonProducts) ? res.json(pantalonProducts) : res.status(404).json({ error: 'Product not found' });
+
+  } 
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// To GET product of type Sport---------------------------------
+app.get('/sport', async (req, res) => {
+  try {
+    const sportProducts = await postAllProduct.find({ type: 'Sport' });
+
+    (sportProducts) ? res.json(sportProducts) : res.status(404).json({ error: 'Product not found' });
+
+  } 
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 //----------------------------------------------------------------
 //database connection: http://localhost:3005/ pour voir le message
