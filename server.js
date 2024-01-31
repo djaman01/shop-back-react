@@ -134,42 +134,16 @@ catch (error) {
 
 }
 )
-// To GET product of type chemise---------------------------------
-app.get('/chemise', async (req, res) => {
+
+// Dynamic route to GET products by type for the different categories
+app.get('/products/:type', async (req, res) => {
   try {
-    const chemiseProducts = await postAllProduct.find({ type: 'Chemise' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"Chemise"
+    const productType = req.params.type;
+    const products = await postAllProduct.find({ type: productType });
 
-    (chemiseProducts) ? res.json(chemiseProducts) : res.status(404).json({ error: 'Product not found' });
-
+    (products) ? res.json(products) : res.status(404).json({ error: 'Products not found' });
   } 
-  catch (error) {
-    console.error('Error fetching products from the database:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// To GET product of type Pantalon---------------------------------
-app.get('/pantalon', async (req, res) => {
-  try {
-    const pantalonProducts = await postAllProduct.find({ type: 'Pantalon' });
-
-    (pantalonProducts) ? res.json(pantalonProducts) : res.status(404).json({ error: 'Product not found' });
-
-  } 
-  catch (error) {
-    console.error('Error fetching products from the database:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// To GET product of type Sport---------------------------------
-app.get('/sport', async (req, res) => {
-  try {
-    const sportProducts = await postAllProduct.find({ type: 'Sport' });
-
-    (sportProducts) ? res.json(sportProducts) : res.status(404).json({ error: 'Product not found' });
-
-  } 
+  
   catch (error) {
     console.error('Error fetching products from the database:', error);
     res.status(500).json({ error: 'Internal Server Error' });
